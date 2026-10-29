@@ -1,0 +1,973 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Little Question 🐼🖤🤍</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  font-family: "Segoe UI", sans-serif;
+  color: #111;
+  background: linear-gradient(
+    to bottom,
+    #050505 0%,
+    #050505 50%,
+    #fff 50%,
+    #fff 100%
+  );
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+.hidden {
+  display: none !important;
+}
+
+body.locked {
+  overflow: hidden;
+}
+
+body.locked > :not(#gate) {
+  display: none !important;
+}
+
+/* FLOATING HEARTS AND PANDAS */
+
+.heart {
+  position: fixed;
+  bottom: -35px;
+  opacity: .8;
+  pointer-events: none;
+  animation: floatUp linear infinite;
+  z-index: 0;
+}
+
+@keyframes floatUp {
+  to {
+    transform: translateY(-115vh) rotate(25deg);
+    opacity: 0;
+  }
+}
+
+/* MAIN CARDS */
+
+.card,
+.gate {
+  width: min(100%, 520px);
+  padding: 30px 24px;
+  background: #fff;
+  color: #111;
+  border: 2px solid #111;
+  border-radius: 26px;
+  box-shadow: 0 20px 55px rgba(0,0,0,.25);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.gate {
+  width: min(100%, 450px);
+  animation: fadeIn .5s ease both;
+  z-index: 20;
+}
+
+h1 {
+  font-size: clamp(1.7rem, 6vw, 2.2rem);
+  color: #080808;
+}
+
+p {
+  line-height: 1.55;
+}
+
+.subtitle {
+  color: #555;
+}
+
+.top-heart {
+  font-size: 43px;
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+/* BUTTONS */
+
+button {
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  border-radius: 15px;
+  padding: 13px 22px;
+  transition: transform .2s, opacity .2s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  opacity: .6;
+  cursor: wait;
+}
+
+.yes {
+  color: #fff;
+  background: linear-gradient(135deg, #ff4f91, #b44be4);
+  border: 1px solid #ff4f91;
+  box-shadow: 0 7px 18px rgba(232,179,212,.6);
+}
+
+.no,
+.secondary {
+  color: #111;
+  background: #fff;
+  border: 1px solid #111;
+}
+
+.buttons,
+.actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.hint,
+.gate-error {
+  min-height: 24px;
+  color: #c02f78;
+  margin-top: 18px;
+  overflow-wrap: anywhere;
+}
+
+/* PASSWORD PAGES */
+
+.gate input {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin: 18px 0;
+  border: 1px solid #999;
+  border-radius: 13px;
+  font: inherit;
+  background: #fff;
+  color: #111;
+  outline-color: #ff4f91;
+}
+
+/* PAGE ANIMATION */
+
+.step {
+  animation: fadeIn .45s ease both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* DATE AND MESSAGE FIELDS */
+
+.field {
+  text-align: left;
+  margin: 20px 0;
+}
+
+label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+input[type="date"],
+textarea {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #999;
+  border-radius: 13px;
+  font: inherit;
+  background: #fff;
+  color: #111;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+/* ACTIVITIES */
+
+.activities {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.activity {
+  min-height: 65px;
+  padding: 12px 8px;
+  background: #fff;
+  color: #111;
+  border: 1px solid #aaa;
+  border-radius: 14px;
+}
+
+.activity.selected {
+  color: #fff;
+  background: linear-gradient(135deg, #ff4f91, #b44be4);
+  border-color: #ff4f91;
+}
+
+/* DATE SUMMARY */
+
+.summary {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 18px;
+  padding: 15px;
+  margin: 18px 0;
+  text-align: left;
+}
+
+/* CONSENT */
+
+.consent {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 400;
+  margin: 15px 0;
+}
+
+.consent input {
+  margin-top: 4px;
+  flex-shrink: 0;
+}
+
+/* SURPRISE POPUP */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(0,0,0,.88);
+  backdrop-filter: blur(8px);
+  overflow-y: auto;
+}
+
+.modal-box {
+  position: relative;
+  width: min(100%, 520px);
+  padding: 14px;
+  border: 2px solid #fff;
+  border-radius: 24px;
+  background: #080808;
+  color: #fff;
+  box-shadow: 0 25px 90px #000;
+  animation: zoomIn .5s ease both;
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(.65);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.thank-you {
+  text-align: center;
+  margin: 10px 0 12px;
+  font-family: "Brush Script MT", "Segoe Script", cursive;
+  font-size: clamp(2.4rem, 9vw, 3.8rem);
+  color: #ff75b2;
+  text-shadow: 0 0 14px #ffb6d9;
+  animation: thankYouReveal 1.8s ease both;
+}
+
+@keyframes thankYouReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(.75);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(-3px) scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.from-signature {
+  text-align: center;
+  margin: 0 0 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.from-signature span {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #ccc;
+  font-style: italic;
+}
+
+.from-signature strong {
+  font-family: "Brush Script MT", "Segoe Script", cursive;
+  font-size: 27px;
+  color: #ff3f91;
+  text-shadow: 0 0 10px #ffc0df;
+  padding: 3px 15px;
+  border-bottom: 2px solid #ff91c6;
+  border-radius: 10px;
+  animation: signatureGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes signatureGlow {
+  from {
+    text-shadow: 0 0 5px #ffc0df;
+    transform: scale(1);
+  }
+  to {
+    text-shadow: 0 0 14px #ff65ad, 0 0 22px #ffc0df;
+    transform: scale(1.06);
+  }
+}
+
+.modal-box img {
+  display: block;
+  width: 100%;
+  max-height: 65vh;
+  object-fit: contain;
+  border-radius: 16px;
+}
+
+.photo-caption {
+  text-align: center;
+  color: #ff9ac8;
+  font-weight: 700;
+  margin: 12px 4px 3px;
+}
+
+.close {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  z-index: 2;
+  padding: 5px 12px;
+  color: #fff;
+  background: #222;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 1.2;
+}
+
+/* MOBILE RESPONSIVE */
+
+@media (max-width: 380px) {
+  .activities {
+    grid-template-columns: 1fr;
+  }
+
+  .card,
+  .gate {
+    padding: 24px 18px;
+  }
+}
+</style>
+</head>
+
+<body class="locked">
+
+<!-- PASSWORD PAGE 1 -->
+
+<div id="gate" class="gate">
+
+  <section id="gate1">
+    <div class="top-heart">🐼💗🐼</div>
+    <p>A little secret for you ✨</p>
+    <h1>Question No. 1</h1>
+    <p>Aapko ye MENTAL kis naam se bulata hai?</p>
+
+    <input
+      id="answer1"
+      type="password"
+      placeholder="Enter your answer..."
+      autocomplete="off"
+      aria-label="First answer"
+    >
+
+    <button id="check1" class="yes">Next 💕</button>
+    <p id="error1" class="gate-error" aria-live="polite"></p>
+  </section>
+
+  <!-- PASSWORD PAGE 2 -->
+
+  <section id="gate2" class="hidden">
+    <div class="top-heart">🐼🤍🐼</div>
+    <p>Just one more question 💖</p>
+    <h1>Question No. 2</h1>
+    <p>Aap Use kya kehti ho?</p>
+
+    <input
+      id="answer2"
+      type="password"
+      placeholder="Enter your answer..."
+      autocomplete="off"
+      aria-label="Second answer"
+    >
+
+    <button id="check2" class="yes">Open Website 💗</button>
+    <p id="error2" class="gate-error" aria-live="polite"></p>
+  </section>
+
+</div>
+
+<!-- FLOATING DECORATIONS -->
+
+<div id="hearts" aria-hidden="true"></div>
+
+<!-- MAIN WEBSITE -->
+
+<main class="card">
+
+  <!-- STEP 1: INVITATION -->
+
+  <section id="step1" class="step">
+    <div class="top-heart">🐼💗🐼</div>
+    <p>A tiny question for someone special</p>
+    <h1>Hey, You! ✨</h1>
+
+    <p class="subtitle">
+      I have a little question for you...<br>
+      <strong>Will you go out with me?</strong> 🌷
+    </p>
+
+    <div class="buttons">
+      <button id="yesBtn" class="yes">YES! 💖</button>
+      <button id="noBtn" class="no">NO 🙈</button>
+    </div>
+
+    <div id="hint" class="hint">Choose carefully 😌</div>
+    <div class="top-heart">🐼🤍🐼</div>
+  </section>
+
+  <!-- STEP 2: DATE -->
+
+  <section id="step2" class="step hidden">
+    <div class="top-heart">🐼📅</div>
+    <h1>Yay! Let's plan it 💕</h1>
+    <p class="subtitle">Pick a date that works for you.</p>
+
+    <div class="field">
+      <label for="date">Our date</label>
+      <input id="date" type="date" required>
+    </div>
+
+    <div class="actions">
+      <button id="back1" class="secondary">Back</button>
+      <button id="next2" class="yes">Next 💗</button>
+    </div>
+
+    <p id="dateError" class="hint"></p>
+  </section>
+
+  <!-- STEP 3: ACTIVITY -->
+
+  <section id="step3" class="step hidden">
+    <div class="top-heart">🐼🌸</div>
+    <h1>What should we do?</h1>
+    <p class="subtitle">Choose our little adventure.</p>
+
+    <div class="activities">
+      <button class="activity" data-activity="Dinner Date 🍝">
+        Dinner Date 🍝
+      </button>
+
+      <button class="activity" data-activity="Movie Night 🎬">
+        Movie Night 🎬
+      </button>
+
+      <button class="activity" data-activity="Coffee & Walk ☕">
+        Coffee & Walk ☕
+      </button>
+
+      <button class="activity" data-activity="Picnic 🌷">
+        Picnic 🌷
+      </button>
+
+      <button class="activity"
+        data-activity="Just Listening to Music Together 🎧❤️">
+        Music Together 🎧❤️
+      </button>
+
+      <button class="activity" data-activity="Surprise Me 🎁">
+        Surprise Me 🎁
+      </button>
+    </div>
+
+    <div class="actions">
+      <button id="back2" class="secondary">Back</button>
+      <button id="next3" class="yes">Continue ✨</button>
+    </div>
+
+    <p id="activityError" class="hint"></p>
+  </section>
+
+  <!-- STEP 4: CONFIRMATION -->
+
+  <section id="step4" class="step hidden">
+    <div class="top-heart">🐼🥹💖</div>
+    <h1>It's a date!</h1>
+    <p class="subtitle">I can't wait to spend time with you.</p>
+
+    <div class="summary">
+      <p>
+        <strong>📅 Date:</strong>
+        <span id="finalDate"></span>
+      </p>
+
+      <p>
+        <strong>✨ Plan:</strong>
+        <span id="finalActivity"></span>
+      </p>
+    </div>
+
+    <p>Thank you for making me smile. 🐼💗</p>
+
+    <div class="field">
+      <label for="feedback">
+        Any message for me? 💌 (Optional)
+      </label>
+
+      <textarea
+        id="feedback"
+        maxlength="500"
+        placeholder="Write your message here..."
+      ></textarea>
+    </div>
+
+    <label class="consent" for="saveConsent">
+      <input id="saveConsent" type="checkbox">
+      <span>
+        I understand and agree to save my choices and message.
+      </span>
+    </label>
+
+    <div class="actions">
+      <button id="submitResponse" class="yes">
+        Send our plan 💌
+      </button>
+
+      <button id="showPhoto" class="secondary hidden">
+        One little surprise 🐼💝
+      </button>
+    </div>
+
+    <p id="submitStatus" class="hint" aria-live="polite"></p>
+    <div class="top-heart">🐼🤍🐼</div>
+  </section>
+
+</main>
+
+<!-- SURPRISE POPUP -->
+
+<div
+  id="photoModal"
+  class="modal hidden"
+  role="dialog"
+  aria-modal="true"
+  aria-label="A little surprise"
+>
+  <div class="modal-box">
+
+    <button
+      class="close"
+      id="closePhoto"
+      aria-label="Close popup"
+    >×</button>
+
+    <div class="top-heart">🐼💗🐼</div>
+
+    <div class="thank-you">Thank You Ma’am 💗</div>
+
+    <div class="from-signature">
+      <span>from</span>
+      <strong>DROPPER 💖</strong>
+    </div>
+
+    <img
+      src="https://i.ibb.co/Qvx1Ys5r/file-00000000e8208208b24e73d062478f67.jpg"
+      alt="A special memory"
+    >
+
+    <p class="photo-caption">
+      A little surprise for you 🐼❤️
+    </p>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+
+  let noClicks = 0;
+  let selectedActivity = "";
+  let isSubmitting = false;
+  let responseSubmitted = false;
+
+  const SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbwnU1fFJ1i5iVazlUYmInKlTpVjopzqnCGD9nTdep52R9_cXIvokQZgJTM60aMPFFc9LA/exec";
+
+  const sections = [
+    "step1",
+    "step2",
+    "step3",
+    "step4"
+  ];
+
+  function showStep(number) {
+    sections.forEach((id, index) => {
+      $(id).classList.toggle(
+        "hidden",
+        index !== number - 1
+      );
+    });
+  }
+
+  // PASSWORD 1: MADAM JII
+
+  $("check1").addEventListener("click", () => {
+    const answer = $("answer1").value.trim().toLowerCase();
+
+    if (answer !== "madam jii") {
+      $("error1").textContent =
+        "Wrong answer! Try again 🐼";
+
+      $("answer1").focus();
+      return;
+    }
+
+    $("error1").textContent = "";
+    $("gate1").classList.add("hidden");
+    $("gate2").classList.remove("hidden");
+    $("answer2").focus();
+  });
+
+  // PASSWORD 2: DROPPER
+
+  $("check2").addEventListener("click", () => {
+    const answer = $("answer2").value.trim().toLowerCase();
+
+    if (answer !== "dropper") {
+      $("error2").textContent =
+        "Wrong answer! Try again 💗";
+
+      $("answer2").focus();
+      return;
+    }
+
+    $("error2").textContent = "";
+    $("gate").classList.add("hidden");
+    document.body.classList.remove("locked");
+    showStep(1);
+  });
+
+  // PRESS ENTER TO SUBMIT PASSWORDS
+
+  $("answer1").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      $("check1").click();
+    }
+  });
+
+  $("answer2").addEventListener("keydown", event => {
+    if (event.key === "Enter") {
+      $("check2").click();
+    }
+  });
+
+  // FLOATING HEARTS AND PANDAS
+
+  const heartBox = $("hearts");
+  const decorations = [
+    "♡", "♥", "💗", "🐼", "🤍", "✨"
+  ];
+
+  for (let i = 0; i < 22; i++) {
+    const item = document.createElement("span");
+
+    item.className = "heart";
+    item.textContent =
+      decorations[i % decorations.length];
+
+    item.style.left = Math.random() * 100 + "vw";
+
+    item.style.animationDuration =
+      8 + Math.random() * 9 + "s";
+
+    item.style.animationDelay =
+      -Math.random() * 14 + "s";
+
+    item.style.fontSize =
+      15 + Math.random() * 20 + "px";
+
+    item.style.color =
+      i % 3 === 0 ? "#fff" : "#ff4f91";
+
+    heartBox.appendChild(item);
+  }
+
+  // WARN BEFORE LEAVING THE FINAL PAGE
+
+  window.addEventListener("beforeunload", event => {
+    if (
+      !responseSubmitted &&
+      !$("step4").classList.contains("hidden")
+    ) {
+      event.preventDefault();
+      event.returnValue = "";
+    }
+  });
+
+  // YES BUTTON
+
+  $("yesBtn").addEventListener("click", () => {
+    showStep(2);
+  });
+
+  // PLAYFUL NO BUTTON
+
+  $("noBtn").addEventListener("click", () => {
+    noClicks++;
+
+    $("yesBtn").style.transform =
+      `scale(${Math.min(1 + noClicks * .15, 2.15)})`;
+
+    $("noBtn").style.transform =
+      `scale(${Math.max(1 - noClicks * .1, .35)})`;
+
+    const messages = [
+      "Are you sure? 🐼",
+      "Better say yes! 💗",
+      "Give YES a chance! 🤍"
+    ];
+
+    $("hint").textContent =
+      noClicks >= 4
+        ? "Just kidding… but ignored 😁"
+        : messages[Math.min(noClicks - 1, 2)];
+
+    if (noClicks >= 7) {
+      $("noBtn").style.opacity = "0";
+      $("noBtn").style.pointerEvents = "none";
+      $("noBtn").classList.add("hidden");
+
+      $("hint").textContent =
+        "Just kidding… but ignored 😁";
+    }
+  });
+
+  // DATE SELECTION
+
+  $("back1").addEventListener("click", () => {
+    showStep(1);
+  });
+
+  $("next2").addEventListener("click", () => {
+    if (!$("date").value) {
+      $("dateError").textContent =
+        "Please choose a date first 💗";
+      return;
+    }
+
+    $("dateError").textContent = "";
+    showStep(3);
+  });
+
+  // ACTIVITY SELECTION
+
+  document.querySelectorAll(".activity").forEach(button => {
+    button.addEventListener("click", () => {
+      selectedActivity = button.dataset.activity;
+
+      document.querySelectorAll(".activity").forEach(item => {
+        item.classList.toggle(
+          "selected",
+          item === button
+        );
+      });
+
+      $("activityError").textContent = "";
+    });
+  });
+
+  $("back2").addEventListener("click", () => {
+    showStep(2);
+  });
+
+  // CONFIRMATION SCREEN
+
+  $("next3").addEventListener("click", () => {
+    if (!selectedActivity) {
+      $("activityError").textContent =
+        "Pick one activity, please 🌷";
+      return;
+    }
+
+    const date = new Date(
+      $("date").value + "T12:00:00"
+    );
+
+    $("finalDate").textContent =
+      date.toLocaleDateString(undefined, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+
+    $("finalActivity").textContent =
+      selectedActivity;
+
+    $("submitStatus").textContent = "";
+
+    showStep(4);
+  });
+
+  // SUBMIT TO GOOGLE APPS SCRIPT
+
+  $("submitResponse").addEventListener(
+    "click",
+    async () => {
+      if (isSubmitting || responseSubmitted) return;
+
+      const date = $("date").value;
+      const feedback = $("feedback").value.trim();
+
+      if (!date || !selectedActivity) {
+        $("submitStatus").textContent =
+          "Please select a date and activity first 💗";
+        return;
+      }
+
+      if (!$("saveConsent").checked) {
+        $("submitStatus").textContent =
+          "Please agree before submitting 💗";
+        return;
+      }
+
+      isSubmitting = true;
+      $("submitResponse").disabled = true;
+
+      $("submitStatus").textContent =
+        "Sending your response... 💌";
+
+      const data = new URLSearchParams();
+
+      data.append("date", date);
+      data.append("activity", selectedActivity);
+      data.append("feedback", feedback);
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          body: data
+        });
+
+        responseSubmitted = true;
+
+        $("submitStatus").textContent =
+          "Request sent 💗 Thank you! Please verify the response was saved.";
+
+        $("submitResponse").textContent =
+          "Response sent 💗";
+
+        $("showPhoto").classList.remove("hidden");
+
+      } catch (error) {
+        $("submitStatus").textContent =
+          "Could not send. Check your internet and try again.";
+      } finally {
+        isSubmitting = false;
+        $("submitResponse").disabled = false;
+      }
+    }
+  );
+
+  // SURPRISE PHOTO POPUP
+
+  const modal = $("photoModal");
+
+  $("showPhoto").addEventListener("click", () => {
+    if (!responseSubmitted) return;
+
+    modal.classList.remove("hidden");
+  });
+
+  function closeModal() {
+    modal.classList.add("hidden");
+  }
+
+  $("closePhoto").addEventListener(
+    "click",
+    closeModal
+  );
+
+  modal.addEventListener("click", event => {
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      closeModal();
+    }
+  });
+
+})();
+</script>
+
+</body>
+  </html>
